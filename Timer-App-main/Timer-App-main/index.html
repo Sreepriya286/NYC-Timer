@@ -1,144 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speaker Timer</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <style>
-    body {
-      background-color: white;
-      color: black;
-      text-align: center;
-      font-family: Arial, sans-serif;
-    }
-    #timer-container {
-      margin-top: 50px;
-    }
-    #timer-display {
-      font-size: 5rem;
-    }
-    #host-controls {
-      margin-top: 30px;
-    }
-    .control-section {
-      margin: 15px 0;
-    }
-  </style>
-</head>
-<body>
-  <div id="timer-container">
-    <h1 id="timer-display">00:00</h1>
-  </div>
+<script>
+let totalSeconds = 0;
+let timerInterval;
 
-  <div id="host-controls">
-    <h2>Host Controls</h2>
-    
-    <!-- Time Settings Section -->
-    <div class="control-section">
-      <label for="minutes">Minutes:</label>
-      <input type="number" id="minutes" value="0" min="0">
-      <label for="seconds">Seconds:</label>
-      <input type="number" id="seconds" value="0" min="0">
-      <button onclick="setTimer()">Set Timer</button>
-    </div>
+function setTimer() {
+    const minutes = parseInt(document.getElementById('minutes').value) || 0;
+    const seconds = parseInt(document.getElementById('seconds').value) || 0;
+    totalSeconds = minutes * 60 + seconds;
+    updateDisplay();
+    document.getElementById('timer-container').style.display = 'block';
+    document.body.style.backgroundColor = ''; // reset background
+}
 
-    <!-- Timer Control Buttons Section -->
-    <div class="control-section">
-      <button onclick="startTimer()">Start</button>
-      <button onclick="pauseTimer()">Pause</button>
-      <button onclick="resetTimer()">Reset</button>
-    </div>
-
-    <!-- Time Adjustment Section -->
-    <div class="control-section">
-      <button onclick="addTime()">+1 Min</button>
-      <button onclick="subtractTime()">-1 Min</button>
-    </div>
-
-    <!-- Bell and Flash Settings Section -->
-    <div class="control-section">
-      <label for="bell-seconds">Bell at (seconds remaining):</label>
-      <input type="number" id="bell-seconds" value="10" min="1">
-      <button onclick="playBellNow()">Play Bell Now</button>
-    </div>
-  </div>
-
-  <script>
-    let timerInterval;
-    let totalSeconds = 0;
-    let remainingSeconds = 0;
-
-    function setTimer() {
-      const minutes = parseInt(document.getElementById("minutes").value) || 0;
-      const seconds = parseInt(document.getElementById("seconds").value) || 0;
-      totalSeconds = minutes * 60 + seconds;
-      remainingSeconds = totalSeconds;
-      updateDisplay();
-    }
-
-    function updateDisplay() {
-      const display = document.getElementById("timer-display");
-      const minutes = Math.floor(remainingSeconds / 60);
-      const seconds = remainingSeconds % 60;
-
-      // Hide after 1 min, show only last 5 mins
-      if (remainingSeconds <= totalSeconds - 60 && remainingSeconds > 300) {
-        document.body.style.backgroundColor = "black";
-        display.style.display = "none";
-      } else {
-        document.body.style.backgroundColor = "white";
-        display.style.display = "block";
-        display.textContent =
-          String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
-      }
-    }
-
-    function startTimer() {
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        if (remainingSeconds > 0) {
-          remainingSeconds--;
-          updateDisplay();
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if (totalSeconds > 0) {
+            totalSeconds--;
+            handleVisibility();
+            updateDisplay();
         } else {
-          clearInterval(timerInterval);
+            clearInterval(timerInterval);
         }
-      }, 1000);
-    }
+    }, 1000);
+}
 
-    function pauseTimer() {
-      clearInterval(timerInterval);
-    }
+function pauseTimer() {
+    clearInterval(timerInterval);
+}
 
-    function resetTimer() {
-      clearInterval(timerInterval);
-      remainingSeconds = totalSeconds;
-      document.body.style.backgroundColor = "white";
-      document.getElementById("timer-display").style.display = "block";
-      updateDisplay();
-    }
+function resetTimer() {
+    clearInterval(timerInterval);
+    totalSeconds = 0;
+    updateDisplay();
+    document.getElementById('timer-container').style.display = 'block';
+    document.body.style.backgroundColor = '';
+}
 
-    function addTime() {
-      remainingSeconds += 60;
-      totalSeconds += 60;
-      updateDisplay();
-    }
+function addTime() {
+    totalSeconds += 60;
+    handleVisibility();
+    updateDisplay();
+}
 
-    function subtractTime() {
-      if (remainingSeconds > 60) {
-        remainingSeconds -= 60;
-        totalSeconds -= 60;
-        updateDisplay();
-      }
-    }
+function subtractTime() {
+    totalSeconds = Math.max(0, totalSeconds - 60);
+    handleVisibility();
+    updateDisplay();
+}
 
-    function playBellNow() {
-      const audio = new Audio("{{ url_for('static', filename='bell.mp3') }}");
-      audio.play();
+function playBellNow() {
+    alert('Bell!'); // replace with actual bell sound if needed
+}
+
+// Update the timer display
+function updateDisplay() {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    document.getElementById('timer-display').textContent =
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Handle visibility according to your requirement
+function handleVisibility() {
+    if (totalSeconds <= 5 * 60) {
+        // Show timer in last 5 minutes
+        document.getElementById('timer-container').style.display = 'block';
+        document.body.style.backgroundColor = ''; // normal background
+    } else if (totalSeconds <= totalSecondsInitial - 60) {
+        // Hide timer after first minute
+        document.getElementById('timer-container').style.display = 'none';
+        document.body.style.backgroundColor = 'black'; // dark screen
     }
-  </script>
-</body>
-</html>
+}
+
+// Store initial time for reference
+let totalSecondsInitial = 0;
+document.getElementById('minutes').addEventListener('change', () => {
+    totalSecondsInitial = parseInt(document.getElementById('minutes').value) * 60;
+});
+document.getElementById('seconds').addEventListener('change', () => {
+    totalSecondsInitial += parseInt(document.getElementById('seconds').value);
+});
+</script>
+
 
 
         
+
