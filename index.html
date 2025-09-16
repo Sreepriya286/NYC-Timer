@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speaker Timer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body.blackout {
+            background-color: black;
+            color: black;
+        }
+    </style>
 </head>
 <body>
     <div id="timer-container">
@@ -42,7 +48,90 @@
             <input type="number" id="bell-seconds" value="10" min="1">
             <button onclick="playBellNow()">Play Bell Now</button>
         </div>
+        
+    <script>
+        let totalSeconds = 0;
+        let remainingSeconds = 0;
+        let timerInterval = null;
+        let isRunning = false;
+
+        function updateDisplay() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            document.getElementById("timer-display").textContent =
+                String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+
+            // Visibility logic
+            const body = document.body;
+            if (remainingSeconds <= totalSeconds - 60 && remainingSeconds > 300) {
+                // After first minute until last 5 minutes → blackout
+                body.classList.add("blackout");
+                document.getElementById("timer-container").style.visibility = "hidden";
+            } else {
+                // First minute & last 5 minutes → show
+                body.classList.remove("blackout");
+                document.getElementById("timer-container").style.visibility = "visible";
+            }
+        }
+
+        function setTimer() {
+            const minutes = parseInt(document.getElementById("minutes").value) || 0;
+            const seconds = parseInt(document.getElementById("seconds").value) || 0;
+            totalSeconds = minutes * 60 + seconds;
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+        }
+
+        function startTimer() {
+            if (!isRunning && remainingSeconds > 0) {
+                isRunning = true;
+                timerInterval = setInterval(() => {
+                    if (remainingSeconds > 0) {
+                        remainingSeconds--;
+                        updateDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+        }
+
+        function addTime() {
+            remainingSeconds += 60;
+            totalSeconds += 60;
+            updateDisplay();
+        }
+
+        function subtractTime() {
+            if (remainingSeconds >= 60) {
+                remainingSeconds -= 60;
+                totalSeconds -= 60;
+                updateDisplay();
+            }
+        }
+
+        function playBellNow() {
+            document.getElementById("bell-sound").play();
+        }
+
+        setTimer();
+    </script>
+
 
         <!-- Using a data URL for the bell sound to avoid external file dependency -->
         <audio id="bell-sound" preload="auto">
+
             <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTg
