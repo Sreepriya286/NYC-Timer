@@ -6,30 +6,14 @@
     <title>Speaker Timer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        /* Blackout override */
         body.blackout {
-            background-color: black;
-            color: black;
+            background: black !important;
+            color: black !important;
         }
 
-        .control-section {
-            margin: 10px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background-color: #555;
+        body.blackout #timer-display {
+            visibility: hidden;
         }
     </style>
 </head>
@@ -38,45 +22,32 @@
         <h1 id="timer-display">00:00</h1>
     </div>
 
-    <div id="host-controls">
-        <h2>Host Controls</h2>
-        
-        <!-- Time Settings Section -->
-        <div class="control-section">
+    <div id="controls">
+        <div class="control-group">
             <label for="minutes">Minutes:</label>
             <input type="number" id="minutes" value="0" min="0">
             <label for="seconds">Seconds:</label>
             <input type="number" id="seconds" value="0" min="0">
-            <button onclick="setTimer()">Set Timer</button>
+            <button class="btn-set" onclick="setTimer()">Set Timer</button>
         </div>
 
-        <!-- Timer Control Buttons Section -->
-        <div class="control-section">
-            <button onclick="startTimer()">Start</button>
-            <button onclick="pauseTimer()">Pause</button>
-            <button onclick="resetTimer()">Reset</button>
+        <div class="control-group">
+            <button class="btn-start" onclick="startTimer()">Start</button>
+            <button class="btn-pause" onclick="pauseTimer()">Pause</button>
+            <button class="btn-reset" onclick="resetTimer()">Reset</button>
         </div>
 
-        <!-- Time Adjustment Section -->
-        <div class="control-section">
-            <button onclick="addTime()">+1 Min</button>
-            <button onclick="subtractTime()">-1 Min</button>
+        <div class="control-group">
+            <button class="btn-adjust" onclick="addTime()">+1 Min</button>
+            <button class="btn-adjust" onclick="subtractTime()">-1 Min</button>
         </div>
 
-        <!-- Bell and Flash Settings Section -->
-        <div class="control-section">
+        <div class="control-group">
             <label for="bell-seconds">Bell at (seconds remaining):</label>
             <input type="number" id="bell-seconds" value="10" min="1">
-            <button onclick="playBellNow()">Play Bell Now</button>
+            <button class="btn-test" onclick="playBellNow()">Play Bell Now</button>
         </div>
     </div>
-     <!-- Using a data URL for the bell sound to avoid external file dependency -->
-        <audio id="bell-sound" preload="auto">
-
-            <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0FJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTg
-
-
-    </audio>
 
     <script>
         let totalSeconds = 0;
@@ -90,17 +61,14 @@
             document.getElementById("timer-display").textContent =
                 String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
 
+            // Blackout logic
             const body = document.body;
             if (remainingSeconds <= totalSeconds - 60 && remainingSeconds > 300) {
-                // Blackout between first minute and last 5 minutes
+                // After first minute until last 5 minutes → blackout
                 body.classList.add("blackout");
-                document.getElementById("timer-container").style.visibility = "hidden";
-                document.getElementById("host-controls").style.visibility = "hidden";
             } else {
-                // Show timer & controls in first minute and last 5 minutes
+                // First minute & last 5 minutes → show timer
                 body.classList.remove("blackout");
-                document.getElementById("timer-container").style.visibility = "visible";
-                document.getElementById("host-controls").style.visibility = "visible";
             }
         }
 
@@ -119,6 +87,12 @@
                     if (remainingSeconds > 0) {
                         remainingSeconds--;
                         updateDisplay();
+
+                        // Play bell when hitting configured mark
+                        const bellMark = parseInt(document.getElementById("bell-seconds").value);
+                        if (remainingSeconds === bellMark) {
+                            document.getElementById("bell-sound").play();
+                        }
                     } else {
                         clearInterval(timerInterval);
                         isRunning = false;
@@ -159,9 +133,10 @@
 
         setTimer();
     </script>
+
+    <!-- Using a data URL for the bell sound to avoid external file dependency -->
+    <audio id="bell-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+D2s2kbBjiO1fHTgC0..." type="audio/wav">
+    </audio>
 </body>
 </html>
-
-
-
-       
